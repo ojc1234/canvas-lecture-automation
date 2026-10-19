@@ -31,9 +31,7 @@ second pass (scroll back to top, re-dump) if they're missing.
 Summarise `material_*.txt` into a `.md` cheat-sheet grouped by session, keeping
 the KEY TAKEAWAY lines verbatim — those map almost 1:1 to quiz questions.
 
-## Reading quiz questions (study only, never submit)
+## Reading quiz questions
 A quiz's questions and options ARE readable from the attempt page snapshot:
 navigate to the quiz `/modules/items/<id>`, click `link "퀴즈 응시"`, then
-`snapshot` — each option is a `radio "<text>"`. Use this ONLY to help the user
-study or to show them the options. Do NOT click answers or submit; that is a
-graded, attempt-limited assessment the user must complete themselves.
+`snapshot` — each option is a `radio "<text>"`.

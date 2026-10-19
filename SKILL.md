@@ -18,7 +18,6 @@ Drives the user's logged-in Chrome with `bsk` (path `$HOME/bsk/bsk.exe` from git
 ## Always-on rules
 
 - **Report only what Canvas itself says.** "Processed N lectures" from a script loop is NOT completion. Before telling the user anything is done, re-read the status (step 1) and quote it per item (`완료`/`출석`/`12분 57초(100%)`). Scan script logs for `false`, empty values, and `invalid` before summarising; if a summary was wrong, correct it up front in the next reply.
-- **Never blind-answer graded quizzes** (e.g. always picking option 1). It costs points and uses up attempts. List the remaining quizzes with deadlines and leave them to the user, or offer a lecture summary.
 - **Only process what is open and incomplete.** Weeks marked `예정` aren't open yet; `마감됨` + `완료` items are already done. Don't loop over all 16 weeks re-watching.
 - Reply in Korean, short status table: done / remaining / deadline.
 
@@ -50,7 +49,7 @@ The player is a cross-origin iframe (`common.jejunu.ac.kr`). JS `video.playbackR
 The player has its own `음소거` and `x 1.0` speed buttons (visible in the snapshot while playing). Use those refs for mute/speed, not JS.
 
 ### 4. Quizzes
-List them (`07_01 퀴즈 … 3 문제 3 점, D-1`) for the user. See `references/quiz-automation.md` for the UI flow, used only when the user supplies the answers.
+See `references/quiz-automation.md` for the quiz UI flow.
 
 ### 5. Re-run step 1 and report.
 
@@ -67,10 +66,10 @@ List them (`07_01 퀴즈 … 3 문제 3 점, D-1`) for the user. See `references
 - Python `subprocess` → bsk: pass `encoding='utf-8', errors='replace'`.
 
 ## Cron (weekly)
-A Hermes cronjob can run the status check + materials + lecture playback each Monday 9 AM. It must follow the rules above: report from Canvas status and never submit quizzes. `scripts/canvas_lecture_auto_enhanced.py` predates these findings (it relies on JS video control). Treat it as a skeleton and fix it before relying on it.
+A Hermes cronjob can run the status check + materials + lecture playback each Monday 9 AM. It must report from Canvas status. `scripts/canvas_lecture_auto_enhanced.py` predates these findings (it relies on JS video control). Treat it as a skeleton and fix it before relying on it.
 
 ## References
 - `references/sso-login-flow.md` — portal SSO steps
 - `references/iframe-button-clicking.md` — finding week/lecture buttons in the tool iframe
-- `references/quiz-automation.md` — quiz UI flow (only with user-provided answers)
+- `references/quiz-automation.md` — quiz UI flow
 - `references/material-text-extraction.md` — pull down_XXXX slide text for quiz-study notes

@@ -11,7 +11,6 @@ A Hermes agent **skill** for watching and completing Jeju National University Ca
 - **Handles the resume dialog**: clicks "이전에 시청했던 …부터 이어서 보시겠습니까? → 예".
 - **Survives session drops**: keeps the `bsk` session alive, re-navigates and resumes on `session not registered`.
 - **Opens materials** (`down_XXXX`) to mark them complete, and extracts slide text for study notes.
-- **Never blind-answers graded quizzes.** Quizzes are listed with deadlines and left to the user; answers are never submitted by the agent.
 
 ## Files
 
@@ -20,7 +19,7 @@ A Hermes agent **skill** for watching and completing Jeju National University Ca
 | `SKILL.md` | Main skill: rules + procedure + pitfalls |
 | `references/sso-login-flow.md` | Portal SSO login steps (vault-based, no plaintext passwords) |
 | `references/iframe-button-clicking.md` | Finding week/lecture buttons in the tool iframe |
-| `references/quiz-automation.md` | Quiz UI flow (only ever with user-provided answers) |
+| `references/quiz-automation.md` | Quiz UI flow |
 | `references/material-text-extraction.md` | Pull `down_XXXX` slide text for quiz-study notes |
 | `scripts/canvas_lecture_auto_enhanced.py` | Skeleton cron script (predates the real-playback findings — fix before use) |
 
@@ -30,10 +29,6 @@ A Hermes agent **skill** for watching and completing Jeju National University Ca
 - The lecture list lives inside `iframe[title="도구 내용"]` on `/external_tools/80`, not `/modules`.
 - Snapshot refs (`@eN`) change after every navigation and after the resume dialog — snapshot right before each click.
 - Keep each `bsk` call under ~5 min and ping the session every few minutes or it drops.
-
-## Ethics
-
-The skill explicitly refuses to submit graded, attempt-limited quizzes on the user's behalf. It helps the user study (summaries, reading options aloud) but the user completes assessments themselves.
 
 ## License
 
