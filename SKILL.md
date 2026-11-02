@@ -55,6 +55,7 @@ See `references/quiz-automation.md` for the quiz UI flow.
 
 ## Pitfalls
 
+- **bsk >= 0.4.1 (cooperate mode):** every `evaluate`/`click`/`navigate` on the shared tab fails with `shared page control or observation changed` unless it carries a fresh sync. Run `J=$($B cooperate sync --session $S --json)`, take `context_id` and `observation_id`, and pass `--context $C --observation $O`. Re-sync after every navigation/DOM change. The sync JSON already contains a full snapshot (week counters `x/9`, item `완료`/`예정`), so it doubles as the step-1 status read.
 - **Keep each bsk call under ~5 min, and keep the session alive with a cheap call (snapshot/screenshot) at least every few minutes.** Long `sleep`s let the session drop (`session not registered or already stopped`), and a terminal call that times out leaves no session. On drop: `session start` again, re-navigate, resume (dialog → 예). Hermes terminal foreground caps around 400 s, so chain waits as `sleep 280; snapshot` calls.
 - Re-navigating away mid-play triggers a `beforeunload` that bsk auto-accepts. Progress up to that point is kept.
 - Top-level `return` in `bsk evaluate` → `SyntaxError: Illegal return statement`. Always wrap: `(function(){ ... return x; })()`.
