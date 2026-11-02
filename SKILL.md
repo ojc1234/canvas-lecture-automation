@@ -1,6 +1,6 @@
 ---
 name: canvas-lecture-automation
-description: "Use when watching/completing Jeju Canvas (LearningX) lectures via bsk. Status-first, real playback, verify 100%."
+description: "Use when watching/downloading Jeju Canvas lectures via bsk. Real playback, verify 100%."
 version: 2.0.0
 author: Hermes Agent
 license: MIT
@@ -13,20 +13,24 @@ metadata:
 
 # Canvas (Jeju LearningX) Lecture Completion via BrowserSkill
 
-Drives the user's logged-in Chrome with `bsk` (path `$HOME/bsk/bsk.exe` from git-bash). Load `browserskill-user-chrome` too for generic bsk usage.
+Drives the user's logged-in Chrome with `bsk` (path `/c/Users/ojc12/bsk/bsk.exe` from git-bash). Load `browserskill-user-chrome` too for generic bsk usage.
+
+The user's private repo `ojc1234/canvas-lecture-automation` is a published copy of this skill. When the user points at it, just follow this skill; there's no need to clone it. If you do clone it, use `gh repo clone`.
 
 ## Always-on rules
 
 - **Report only what Canvas itself says.** "Processed N lectures" from a script loop is NOT completion. Before telling the user anything is done, re-read the status (step 1) and quote it per item (`완료`/`출석`/`12분 57초(100%)`). Scan script logs for `false`, empty values, and `invalid` before summarising; if a summary was wrong, correct it up front in the next reply.
+- **Never blind-answer graded quizzes** (e.g. always picking option 1). It costs points and uses up attempts. By default (cron) list the remaining quizzes with deadlines. When the user explicitly asks you to do the quizzes ("퀴즈도"), take them yourself: pull that week's material PDFs first (see `references/material-text-extraction.md`, section 0), answer from the material, check that all 3 radios show `[checked]` before submitting, and confirm `3 / 3` in 시도 이력.
 - **Only process what is open and incomplete.** Weeks marked `예정` aren't open yet; `마감됨` + `완료` items are already done. Don't loop over all 16 weeks re-watching.
 - Reply in Korean, short status table: done / remaining / deadline.
+- **Act, don't offer.** When the user asks for this (or "automate everything"), do every safe step yourself — status read, materials, playback, cron setup/repair — and report the result. Don't end with "원하시면 제가 …할게요" for things you could just do; the user pushes back on that. The only hand-back is graded quizzes.
 
 ## Procedure
 
 ### 1. Read real status (do this first and last)
 `/courses/43379/modules` redirects to the course home; the list lives in the LTI tool page `https://canvas.jejunu.ac.kr/courses/43379/external_tools/80`, inside `iframe[title="도구 내용"]` (same-origin, readable).
 ```bash
-B=$HOME/bsk/bsk.exe; S=$($B session start --quiet | tr -d '\r\n')
+B=/c/Users/ojc12/bsk/bsk.exe; S=$($B session start --quiet | tr -d '\r\n')
 $B navigate "https://canvas.jejunu.ac.kr/courses/43379/external_tools/80" --session $S >/dev/null; sleep 4
 # expand every week, then dump text
 $B evaluate --session $S "(function(){var d=document.querySelector('iframe[title=\"도구 내용\"]').contentDocument;Array.from(d.querySelectorAll('button')).forEach(function(b){if(/주차/.test(b.textContent)&&b.getAttribute('aria-expanded')!=='true')b.click();});return 1})()"; sleep 4
@@ -49,7 +53,7 @@ The player is a cross-origin iframe (`common.jejunu.ac.kr`). JS `video.playbackR
 The player has its own `음소거` and `x 1.0` speed buttons (visible in the snapshot while playing). Use those refs for mute/speed, not JS.
 
 ### 4. Quizzes
-See `references/quiz-automation.md` for the quiz UI flow.
+List them (`07_01 퀴즈 … 3 문제 3 점, D-1`) for the user. See `references/quiz-automation.md` for the UI flow, used only when the user supplies the answers.
 
 ### 5. Re-run step 1 and report.
 
@@ -66,11 +70,17 @@ See `references/quiz-automation.md` for the quiz UI flow.
 - Login: SSO via the 제주대 portal. See `references/sso-login-flow.md`. Never type the password yourself; use the browser vault.
 - Python `subprocess` → bsk: pass `encoding='utf-8', errors='replace'`.
 
-## Cron (weekly)
-A Hermes cronjob can run the status check + materials + lecture playback each Monday 9 AM. It must report from Canvas status. `scripts/canvas_lecture_auto_enhanced.py` predates these findings (it relies on JS video control). Treat it as a skeleton and fix it before relying on it.
+## Cron (daily)
+Weeks open on irregular weekdays (Tue/Wed/Thu…), so schedule **`every day at 9am`**, not weekly — a Monday-only job misses most of each week's window.
+- `cronjob_manage list` first and **update/resume the existing job** (named `canvas_auto_attendance_daily`) instead of creating a duplicate.
+- Job config: `skills: [canvas-lecture-automation, browserskill-user-chrome]`, `enabled_toolsets: [terminal, file]`, `deliver: origin`. Prompt (Korean, self-contained): steps 1–5 above, "only open + incomplete items", 1x real playback via snapshot refs, quizzes solved from the week's material PDF (submit only when every answer is grounded, verify `3 / 3`, never re-take), on login page report "재로그인 필요" without typing a password, and a one-line "처리할 항목 없음" when idle. The user opted into cron quiz-solving; before that, cron only listed quizzes.
+- Requires the PC on, Chrome logged in, BrowserSkill connected at fire time — say so in the report to the user.
+- `scripts/canvas_lecture_auto_enhanced.py` predates these findings (it relies on JS video control). Don't use it as the cron payload; the skill-driven agent prompt is the working path.
 
 ## References
 - `references/sso-login-flow.md` — portal SSO steps
 - `references/iframe-button-clicking.md` — finding week/lecture buttons in the tool iframe
-- `references/quiz-automation.md` — quiz UI flow
+- `references/quiz-automation.md` — quiz UI flow (only with user-provided answers)
 - `references/material-text-extraction.md` — pull down_XXXX slide text for quiz-study notes
+- `references/video-download-transcribe.md` — download lecture mp4 + Whisper GPU transcript + notes
+- `references/video-download-transcript.md` — resolve a lecture's MP4 (content.php → CDN), download, Whisper transcript, per-차시 summary

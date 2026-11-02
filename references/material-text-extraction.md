@@ -5,6 +5,13 @@ HTML text at `https://common.jejunu.ac.kr/em/<content_id>`. You can pull the ful
 text (summaries + lecture scripts + key takeaways) to build quiz-study notes
 WITHOUT any PDF tooling.
 
+## 0. Fastest path: download the original PDF (works, no login needed)
+The viewer renders slides as images, so its innerText is only `down_0901 1 / 17`, and scrolling doesn't help. Instead:
+1. Get the content_id (step 1 below).
+2. `curl -s -o X.pdf https://common.jejunu.ac.kr/contents4/jjuuni1001/<content_id>/contents/web_files/original.pdf`. The path comes from `/viewer/ssplayer/uniplayer_support/content.php?content_id=<id>` (`content_uri` + `original.pdf`).
+3. Extract the text with `python3 -c "import fitz; ...get_text()"` (PyMuPDF is installed for python3).
+Avoid long Promise/setInterval evaluates. They time out and leave the tab "still settling", and only `session stop`/`start` recovers it.
+
 ## 1. Find the content_id
 From a material item page (`/modules/items/<id>`), the inner player iframe `src`
 contains the id:
@@ -31,7 +38,9 @@ second pass (scroll back to top, re-dump) if they're missing.
 Summarise `material_*.txt` into a `.md` cheat-sheet grouped by session, keeping
 the KEY TAKEAWAY lines verbatim — those map almost 1:1 to quiz questions.
 
-## Reading quiz questions
+## Reading quiz questions (study only, never submit)
 A quiz's questions and options ARE readable from the attempt page snapshot:
 navigate to the quiz `/modules/items/<id>`, click `link "퀴즈 응시"`, then
-`snapshot` — each option is a `radio "<text>"`.
+`snapshot` — each option is a `radio "<text>"`. Use this ONLY to help the user
+study or to show them the options. Do NOT click answers or submit; that is a
+graded, attempt-limited assessment the user must complete themselves.

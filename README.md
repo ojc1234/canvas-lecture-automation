@@ -20,7 +20,8 @@ A Hermes agent **skill** for watching and completing Jeju National University Ca
 | `references/sso-login-flow.md` | Portal SSO login steps (vault-based, no plaintext passwords) |
 | `references/iframe-button-clicking.md` | Finding week/lecture buttons in the tool iframe |
 | `references/quiz-automation.md` | Quiz UI flow |
-| `references/material-text-extraction.md` | Pull `down_XXXX` slide text for quiz-study notes |
+| `references/material-text-extraction.md` | Download `down_XXXX` original PDF + extract text (quiz grounding) |
+| `references/video-download-transcribe.md` / `video-download-transcript.md` | Lecture MP4 download + Whisper transcript |
 | `scripts/canvas_lecture_auto_enhanced.py` | Skeleton cron script (predates the real-playback findings — fix before use) |
 
 ## Key lessons encoded

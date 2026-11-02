@@ -52,6 +52,9 @@
 ./bsk/bsk.exe click --session <id> --ref e47  # 다음 모듈 항목
 ```
 
+## bsk 0.4.1 click
+A bare `click @eN` fails with `requires a valid control context`. Take refs from `bsk snapshot`, then `cooperate sync --json` → `context_id` + `observation_id`, then `click @eN --context C --observation O`. Retry the sync+click if you get `observation changed`. Snapshot refs stay valid for the sync context.
+
 ## Pitfalls
 
 - **Ref volatility**: Quiz element refs (eN) change on every page load — MUST `snapshot` immediately before each `click`
@@ -76,6 +79,25 @@
 | 4주차 | 04_01 | 3 | Cloud Bread case, Internet source usage, AI copyright challenge |
 | 4주차 | 04_02 | 3 | Two Golden Rules (Originality+Expression), Unprotected works, Michael Kenna case |
 | 4주차 | 04_03 | 3 | Copyright ownership, Moral rights, Fair use boundaries |
+
+## Correct Answers Reference (for verification)
+
+| Quiz | Q1 | Q2 | Q3 |
+|------|-----|-----|-----|
+| 01_01 | First-to-File Rule | Hyper-connectivity and Super-intelligence | AI and big data |
+| 01_02 | Humans create meaning based on life experiences... | AI cannot be an inventor... | People, devices, and systems are constantly connected... |
+| 01_03 | They provide Monopoly & Exclusivity... | Patent | Layout-Design of Semiconductor Integrated Circuits |
+| 02_01 | Smartphone - Phone calls and internet... | Permanence | Lightning rod |
+| 02_02 | A highly advanced creation... | Merely combining multiple prior arts logically | Minor Invention (Utility Model) |
+| 02_03 | The invention described in the claims must be compared with a single prior art... | The person who contributed to the completion of the invention | Patents cover both product and method inventions... |
+| 03_01 | First-to-File Rule | A highly advanced creation of technical ideas... | 20 years from the filing date |
+| 03_02 | Patents protect highly advanced inventions... | The visual appearance of an article... | Visual appeal and aesthetic elements |
+| 03_03 | The invention described in the claims must be compared with a single prior art... | The person who contributed to the completion of the invention | A newly invented method for extending the shelf life of ginseng |
+| 04_01 | The author signed a buy-out (lump-sum) agreement... | No, you cannot use them freely just by crediting the source... | There is an urgent need to balance the development of the AI industry... |
+| 09_01 | A poem that you wrote yourself | As soon as you finish drawing it | Moral rights (name and honor) |
+| 09_02 | Right of Publication | Making a copy of a book by printing it | Ask the original author for permission |
+| 09_03 | The sound of ocean waves | A derivative work | For 70 years after the author's death |
+| 04_02 | It must possess "Originality" and "Expression" | Government and legal works... | Choosing a photography spot in nature is considered an "Idea"... |
 
 ## Integration with Main Loop
 
